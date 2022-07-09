@@ -15,8 +15,8 @@ import requests
 
 
 
-EMAIL = 'tech@adaveo.com'
-PASSWORD = 'Adaveo123!'
+EMAIL = ''
+PASSWORD = ''
 
 
 
