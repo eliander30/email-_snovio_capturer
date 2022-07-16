@@ -12,11 +12,12 @@ import os
 import csv
 import json
 import requests
+import random
 
 
 
-EMAIL = ''
-PASSWORD = ''
+EMAIL = 'tech@adaveo.com'
+PASSWORD = 'Adaveo123!'
 
 
 
@@ -129,26 +130,42 @@ table_row = []
 
 global size
 
+global randnumber
+
+global complete 
+
+randnumber = str(random.randint(1000,2000))
+
+path = '/home/eliander/Desktop'
+filename = "emails" + randnumber + ".csv"
+complete = os.path.join(path, filename)	
+
+newfile = open(complete, "w")
+newfile.write("DOMAIN, EMAIL, CITY, FOUNDED, INDUSTRY, SIZE, SOCIAL, LOGO")
+newfile.close()
+
+
 
 for line in lines:
-#	ln = line.strip(" ")
+	ln = line.strip(" ")
 
-#	domain_name = ln	
-#	allnames = []
-#	link2 = "https://app.snov.io/domain-search?name=" + domain_name
-#	time.sleep(10)
-#	browser.get(link2)
-#	try:
-#		tablename_row = get_and_wait_elements(browser, tablename_xpath)
-#	except:
-#		pass
+	domain_name = ln	
+	allnames = []
+	link2 = "https://app.snov.io/domain-search?name=" + domain_name
+	time.sleep(10)
+	browser.get(link2)
+	try:
+		tablename_row = get_and_wait_elements(browser, tablename_xpath)
+	except:
+		pass
 			
-#	try:
-#		for name in tablename_row:
-#		allnames.append(name)
-#	except:
-#		pass
-#	print(allnames)
+	try:
+		for name in tablename_row:
+			completename = name.text.split()
+			allnames.append(completename[0])
+	except:
+		pass
+	print(allnames)
 	 
 	 
 	city_xpath = '/html/body/div[2]/main/div/div[2]/div[2]/div[2]/div[1]/div[1]/div[2]'
@@ -168,9 +185,6 @@ for line in lines:
 	time.sleep(15)
 	browser.get(link)
 	time.sleep(5)
-	path = '/home/eliander/Desktop'
-	filename = "emails.csv"
-	complete = os.path.join(path, filename)	
 	browser.refresh()
 	time.sleep(5)
 	
@@ -191,31 +205,56 @@ for line in lines:
 		
 	for row in table_row:
 		list_data = []
-		
+		domain_name1 = domain_name
+		list_data.append(domain_name1)
 		try:
-#			print(row)
-#			print(table_row)
-#			print(len(table_row))
-			domain_name1 = domain_name
-			list_data.append(domain_name1)
-			list_data.append(row.text)
-			list_data.append(city.text)
-			list_data.append(founded.text)
-#			list_data.append(website.text)
-			list_data.append(industry.text)
-			list_data.append(sizeer.text)
-			list_data.append(social)
-			print(domain_name1)
-			print(list_data)
-			csvfile = open(complete, "a")
-			csv_writer = csv.writer(csvfile)
-			csv_writer.writerow(list_data)
-			csvfile.close()
-			list_data.clear()
-			allnames.clear()
-
+			elname = row.text.split("@")
+			if elname[0] in allnames:
+				list_data.append(row.text)
+			else:
+				list_data.append("none")
+			
 		except:
 			pass
+		
+		try:
+
+			list_data.append(city.text)
+			
+		except:
+			list_data.append("none")
+			
+		try:	
+			list_data.append(founded.text)
+			
+		except:
+			list_data.append("none")
+#			list_data.append(website.text)
+		try:	
+			list_data.append(industry.text)
+		except:
+			list_data.append("none")
+			
+		try:
+			list_data.append(sizeer.text)
+		except:
+			list_data.append("none")
+			
+		try:
+			list_data.append(social)
+		except:
+			list_data.append("none")
+			
+		print(domain_name1)
+		print(list_data)	
+		csvfile = open(complete, "a")
+		csv_writer = csv.writer(csvfile)
+		csv_writer.writerow(list_data)
+		csvfile.close()
+		list_data.clear()
+#		allnames.clear()
+
+
 
 r = requests.get("http://salesrock.ddns.net:5006/emails")	
 print(f"Status Code: {r.status_code}")
